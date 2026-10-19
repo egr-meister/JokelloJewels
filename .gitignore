@@ -1,0 +1,31 @@
+# Gradle / build
+.gradle/
+build/
+**/build/
+/captures
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+
+# Local config
+local.properties
+.idea/
+*.iml
+.DS_Store
+.kotlin/
+
+# Signing — NEVER commit keystores or passwords
+*.jks
+*.keystore
+*.p12
+*.pfx
+keystore.properties
+signing.env
+release-keystore*
+
+# Logs
+*.log

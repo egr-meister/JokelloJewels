@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- "Royal Jester Stage" palette (mirrors ui/theme/Color.kt) -->
+    <color name="jj_night">#FF1A0620</color>
+    <color name="jj_plum">#FF2C0D3A</color>
+    <color name="jj_velvet">#FF4A1786</color>
+    <color name="jj_gold">#FFF6C453</color>
+    <color name="jj_cream">#FFFFF3DC</color>
+
+    <!-- matches the average tone of bg_main so the splash flows into the stage -->
+    <color name="splash_background">#FF2C0D26</color>
+</resources>

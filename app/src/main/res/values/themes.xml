@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App theme used after the splash. Compose draws everything; the window background
+         matches the night color so there is never a white flash. -->
+    <style name="Theme.JokelloJewels" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/jj_night</item>
+        <item name="android:colorBackground">@color/jj_night</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Themed splash (androidx.core:core-splashscreen): stage-tone background + Jokello Jewels logo. -->
+    <style name="Theme.JokelloJewels.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.JokelloJewels</item>
+    </style>
+</resources>
