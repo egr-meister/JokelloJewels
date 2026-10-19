@@ -120,7 +120,7 @@ The quiz texts in `logic/QuizContent.kt` are replaceable; keep the ids `easy` / 
 
 ## Tech stack
 
-Kotlin 2.0.21 · Jetpack Compose (BOM 2024.12.01) · Material 3 · Navigation Compose 2.8.5 (type-safe `@Serializable` routes) · Lifecycle/ViewModel 2.8.7 · Coroutines 1.9.0 · Flow · DataStore Preferences 1.1.1 · Kotlinx Serialization 1.7.3 · core-splashscreen 1.0.1 · AGP 8.7.3 · Gradle 8.9 · Version catalog `gradle/libs.versions.toml`. Every package imported in code is a direct dependency (Compose `foundation`, `foundation-layout`, `animation`, `animation-core`, `ui-*`, `runtime`, `runtime-saveable`, `lifecycle-viewmodel`, `annotation` declared explicitly).
+Kotlin 2.0.21 · Jetpack Compose (BOM 2024.12.01) · Material 3 · Navigation Compose 2.8.5 (type-safe `@Serializable` routes) · Lifecycle/ViewModel 2.8.7 · Coroutines 1.9.0 · Flow · DataStore Preferences 1.1.1 · Kotlinx Serialization 1.7.3 · core-splashscreen 1.0.1 · AGP 8.9.3 · Gradle 8.11.1 · Version catalog `gradle/libs.versions.toml`. Every package imported in code is a direct dependency (Compose `foundation`, `foundation-layout`, `animation`, `animation-core`, `ui-*`, `runtime`, `runtime-saveable`, `lifecycle-viewmodel`, `annotation` declared explicitly).
 
 ## Architecture
 
@@ -144,11 +144,11 @@ Navigation safety: every route arg has a default; `toRoute()` is wrapped; unknow
 1. Android Studio Ladybug (2024.2) or newer. *File → Open* the project folder.
 2. Gradle JDK: **17** (*Settings → Build Tools → Gradle → Gradle JDK*).
 3. SDK Manager: install **Android SDK Platform 36** and **Build-Tools 36.0.0**.
-4. Wrapper: `gradlew` + `gradle/wrapper/gradle-wrapper.jar` (Gradle 8.9) are included. If you prefer to regenerate: `gradle wrapper --gradle-version 8.9`.
+4. Wrapper: `gradlew` + `gradle/wrapper/gradle-wrapper.jar` are included and download Gradle 8.11.1. To regenerate: `gradle wrapper --gradle-version 8.11.1`.
 
 ### API 36 note
 
-AGP 8.7.x predates official API 36 support, so `gradle.properties` contains `android.suppressUnsupportedCompileSdk=36`. If your toolchain still rejects compileSdk 36, bump to AGP **8.9.x+** with Gradle **8.11.1+** in `libs.versions.toml` / wrapper — no code changes needed.
+AGP 8.9.3 officially supports compileSdk / targetSdk 36 (requires Gradle 8.11.1+). No suppress flag is needed.
 
 ### 16 KB page size
 
@@ -204,7 +204,7 @@ export ANDROID_KEY_PASSWORD='...'
 
 ## GitHub Actions
 
-`.github/workflows/android-build.yml` runs on push to `main` and manually (*workflow_dispatch*): JDK 17 → SDK Platform 36 + Build Tools 36.0.0 → Gradle 8.9 via `gradle/actions/setup-gradle` (fixed version, so a committed wrapper is not required) → decode keystore to `$RUNNER_TEMP` → unit tests → signed `assembleRelease` + `bundleRelease` → `apksigner verify --print-certs` (fails on verification error or `CN=Android Debug`) → `jarsigner` check of the AAB → 16 KB alignment check → upload **APK** (test artifact) and **AAB** (Google Play artifact) → delete keystore. Secrets are never echoed.
+`.github/workflows/android-build.yml` runs on push to `main` and manually (*workflow_dispatch*): JDK 17 → SDK Platform 36 + Build Tools 36.0.0 via the runner's own `sdkmanager` (pinned `ubuntu-24.04`) → Gradle 8.11.1 via `gradle/actions/setup-gradle` (fixed version, so a committed wrapper is not required) → decode keystore to `$RUNNER_TEMP` → unit tests → signed `assembleRelease` + `bundleRelease` → `apksigner verify --print-certs` (fails on verification error or `CN=Android Debug`) → `jarsigner` check of the AAB → 16 KB alignment check → upload **APK** (test artifact) and **AAB** (Google Play artifact) → delete keystore. Secrets are never echoed.
 
 ### apksigner
 
@@ -246,5 +246,4 @@ In-app: *Settings → Reset Progress → Reset* (clears quiz bests, pairs bests 
 - English only (strings in `res/values/strings.xml`; quiz content in Kotlin).
 - No cloud backup (`allowBackup="false"`); uninstalling removes progress.
 - On large screens Android 16 (API 36) may ignore the portrait lock for apps targeting 36 (letterboxing/resizing rules); layouts scroll and cap widths to stay usable.
-- AGP 8.7.x + compileSdk 36 relies on `android.suppressUnsupportedCompileSdk` (see API 36 note).
 - The privacy URL is a placeholder until you host a policy.

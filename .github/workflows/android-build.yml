@@ -13,38 +13,44 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GRADLE_VERSION: "8.9"
+  GRADLE_VERSION: "8.11.1"
   BUILD_TOOLS: "36.0.0"
 
 jobs:
   build:
     name: Signed APK + AAB
-    runs-on: ubuntu-latest
+    # Pinned image: ubuntu-latest is migrating to Ubuntu 26 (Oct 2026).
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate Gradle wrapper (if committed)
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
+      # The runner image ships the Android SDK; use its own sdkmanager directly
+      # (android-actions/setup-android@v3 fails trying to install the removed 'tools' package).
       - name: Install SDK Platform 36 + Build Tools 36.0.0
         run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager --install "platform-tools" "platforms;android-36" "build-tools;${BUILD_TOOLS}"
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER=$(ls -d "$SDK"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -n 1)
+          echo "Using $SDKMANAGER"
+          yes | "$SDKMANAGER" --sdk_root="$SDK" --licenses > /dev/null || true
+          "$SDKMANAGER" --sdk_root="$SDK" --install "platform-tools" "platforms;android-36" "build-tools;${BUILD_TOOLS}"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
 
       - name: Set up Gradle ${{ env.GRADLE_VERSION }}
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: ${{ env.GRADLE_VERSION }}
 
